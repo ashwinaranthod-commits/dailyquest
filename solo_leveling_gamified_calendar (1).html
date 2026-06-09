@@ -1,0 +1,824 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap');
+
+  :root {
+    --sl-bg: #0a0a0f;
+    --sl-surface: #0f0f1a;
+    --sl-card: #12121e;
+    --sl-border: #1e1e35;
+    --sl-border-glow: #4a3fa8;
+    --sl-purple: #7c5cbf;
+    --sl-purple-light: #a07de8;
+    --sl-blue: #3a7bd5;
+    --sl-cyan: #00c2d1;
+    --sl-gold: #d4a843;
+    --sl-gold-light: #f0c96e;
+    --sl-red: #c0392b;
+    --sl-green: #27ae60;
+    --sl-text: #c8c8e8;
+    --sl-text-muted: #6a6a9a;
+    --sl-text-dim: #3a3a5a;
+    --sl-xp-bar: #1a1a2e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body, #app {
+    background: var(--sl-bg);
+    color: var(--sl-text);
+    font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  #app { padding: 16px; max-width: 720px; margin: 0 auto; }
+
+  .system-header {
+    border: 1px solid var(--sl-border);
+    border-top: 2px solid var(--sl-purple);
+    background: var(--sl-surface);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .system-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--sl-purple-light);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .player-panel {
+    background: var(--sl-surface);
+    border: 1px solid var(--sl-border);
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .rank-badge {
+    width: 56px;
+    height: 56px;
+    border: 2px solid var(--sl-purple);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: #1a0d2e;
+    position: relative;
+  }
+
+  .rank-letter {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--sl-purple-light);
+  }
+
+  .rank-label {
+    font-size: 9px;
+    color: var(--sl-text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .player-info { flex: 1; }
+
+  .player-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #e8e8ff;
+    letter-spacing: 1px;
+  }
+
+  .player-class {
+    font-size: 12px;
+    color: var(--sl-purple-light);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .xp-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .xp-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--sl-xp-bar);
+    border-radius: 2px;
+    border: 1px solid var(--sl-border);
+    overflow: hidden;
+  }
+
+  .xp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sl-purple) 0%, var(--sl-purple-light) 100%);
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+  .xp-text {
+    font-size: 11px;
+    color: var(--sl-text-muted);
+    white-space: nowrap;
+    min-width: 80px;
+    text-align: right;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 4px;
+  }
+
+  .stat-item {
+    font-size: 12px;
+    color: var(--sl-text-muted);
+  }
+
+  .stat-item span {
+    color: var(--sl-gold);
+    font-weight: 600;
+  }
+
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .month-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #e8e8ff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .nav-btn {
+    background: var(--sl-surface);
+    border: 1px solid var(--sl-border);
+    color: var(--sl-text-muted);
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { border-color: var(--sl-purple); color: var(--sl-purple-light); }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin-bottom: 12px;
+  }
+
+  .day-label {
+    text-align: center;
+    font-size: 10px;
+    color: var(--sl-text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 0;
+    font-weight: 600;
+  }
+
+  .day-cell {
+    background: var(--sl-surface);
+    border: 1px solid var(--sl-border);
+    border-radius: 3px;
+    padding: 6px 4px;
+    min-height: 48px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .day-cell:hover { border-color: var(--sl-purple); }
+  .day-cell.empty { background: transparent; border-color: transparent; cursor: default; }
+  .day-cell.today { border-color: var(--sl-purple); background: #14102a; }
+  .day-cell.selected { border-color: var(--sl-cyan); background: #0a1a2a; }
+
+  .day-num {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sl-text-muted);
+  }
+
+  .day-cell.today .day-num { color: var(--sl-purple-light); }
+  .day-cell.selected .day-num { color: var(--sl-cyan); }
+
+  .day-xp-bar {
+    width: 80%;
+    height: 2px;
+    background: var(--sl-xp-bar);
+    border-radius: 1px;
+    margin-top: 4px;
+    overflow: hidden;
+  }
+
+  .day-xp-fill {
+    height: 100%;
+    border-radius: 1px;
+  }
+
+  .day-complete-mark {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sl-purple);
+    margin-top: 3px;
+    display: none;
+  }
+
+  .quest-panel {
+    background: var(--sl-surface);
+    border: 1px solid var(--sl-border);
+    border-top: 1px solid var(--sl-purple);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .quest-header {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--sl-border);
+  }
+
+  .quest-title-block { display: flex; align-items: center; gap: 8px; }
+
+  .quest-icon { color: var(--sl-gold); font-size: 16px; }
+
+  .quest-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--sl-gold-light);
+  }
+
+  .quest-date {
+    font-size: 11px;
+    color: var(--sl-text-muted);
+    letter-spacing: 1px;
+  }
+
+  .quest-list { padding: 8px; }
+
+  .quest-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 3px;
+    margin-bottom: 4px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .quest-item:hover { background: #1a1a2e; border-color: var(--sl-border); }
+  .quest-item.done { opacity: 0.65; }
+
+  .quest-check {
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--sl-border);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 11px;
+    transition: all 0.15s;
+  }
+
+  .quest-item.done .quest-check {
+    background: var(--sl-purple);
+    border-color: var(--sl-purple);
+    color: #fff;
+  }
+
+  .quest-info { flex: 1; }
+
+  .quest-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sl-text);
+    transition: all 0.15s;
+  }
+
+  .quest-item.done .quest-name {
+    text-decoration: line-through;
+    color: var(--sl-text-muted);
+  }
+
+  .quest-sub {
+    font-size: 11px;
+    color: var(--sl-text-dim);
+    margin-top: 1px;
+  }
+
+  .quest-xp {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sl-purple-light);
+    white-space: nowrap;
+  }
+
+  .quest-item.done .quest-xp { color: var(--sl-text-dim); }
+
+  .daily-progress {
+    padding: 8px 14px;
+    border-top: 1px solid var(--sl-border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: var(--sl-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .progress-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: var(--sl-xp-bar);
+    border-radius: 2px;
+    border: 1px solid var(--sl-border);
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sl-purple) 0%, var(--sl-purple-light) 100%);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-count {
+    font-size: 11px;
+    color: var(--sl-gold);
+    font-weight: 700;
+    white-space: nowrap;
+    min-width: 40px;
+    text-align: right;
+  }
+
+  .notification {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: #1a0d2e;
+    border: 1px solid var(--sl-purple);
+    border-left: 3px solid var(--sl-purple-light);
+    border-radius: 4px;
+    padding: 10px 14px;
+    max-width: 240px;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .notification.show { opacity: 1; transform: translateY(0); }
+
+  .notif-title {
+    font-size: 11px;
+    color: var(--sl-purple-light);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .notif-body {
+    font-size: 13px;
+    color: var(--sl-text);
+  }
+
+  .level-up-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(10, 5, 20, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .level-up-overlay.show { display: flex; }
+
+  .level-up-box {
+    border: 2px solid var(--sl-purple-light);
+    background: #0f0a20;
+    padding: 32px 48px;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .level-up-alert {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--sl-purple-light);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .level-up-text {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+  }
+
+  .level-up-sub {
+    font-size: 14px;
+    color: var(--sl-gold);
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+
+  .dismiss-btn {
+    margin-top: 16px;
+    background: var(--sl-purple);
+    color: #fff;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .rank-bar {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .rank-step {
+    flex: 1;
+    height: 3px;
+    background: var(--sl-border);
+    border-radius: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rank-step-fill {
+    height: 100%;
+    border-radius: 1px;
+    background: var(--sl-purple);
+    transition: width 0.5s;
+  }
+
+  .rank-step-label {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--sl-text-dim);
+    text-align: center;
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
+
+  .rank-track {
+    margin-bottom: 12px;
+  }
+</style>
+
+<h2 class="sr-only">Solo Leveling gamified task calendar — track daily quests and level up</h2>
+
+<div id="app">
+  <div class="system-header">
+    <div class="system-title">◆ System Interface — Daily Quest Terminal</div>
+    <div style="font-size:11px;color:var(--sl-text-dim);letter-spacing:1px;">NOTION SYNC: ACTIVE</div>
+  </div>
+
+  <div class="player-panel" id="playerPanel"></div>
+
+  <div class="rank-track" id="rankTrack"></div>
+
+  <div class="calendar-header">
+    <button class="nav-btn" id="prevBtn">&#8249; PREV</button>
+    <div class="month-title" id="monthTitle"></div>
+    <button class="nav-btn" id="nextBtn">NEXT &#8250;</button>
+  </div>
+
+  <div class="calendar-grid" id="calendarGrid"></div>
+
+  <div class="quest-panel" id="questPanel"></div>
+</div>
+
+<div class="notification" id="notification">
+  <div class="notif-title" id="notifTitle"></div>
+  <div class="notif-body" id="notifBody"></div>
+</div>
+
+<div class="level-up-overlay" id="levelUpOverlay">
+  <div class="level-up-box">
+    <div class="level-up-alert">◆ System Alert ◆</div>
+    <div class="level-up-text" id="levelUpText"></div>
+    <div class="level-up-sub" id="levelUpSub"></div>
+    <button class="dismiss-btn" onclick="dismissLevelUp()">Acknowledge</button>
+  </div>
+</div>
+
+<script>
+const RANKS = ['E','D','C','B','A','S','SS','SSS','National'];
+const RANK_COLORS = ['#888','#27ae60','#3a7bd5','#a07de8','#d4a843','#c0392b','#e74c3c','#9b59b6','#f39c12'];
+const RANK_THRESHOLDS = [0,200,500,1000,2000,3500,5500,8000,12000];
+
+const QUESTS = [
+  {id:'morning',name:'Morning Ritual',sub:'Wake up + hydrate + stretch',xp:25,icon:'ti-sun'},
+  {id:'workout',name:'Physical Training',sub:'30 min exercise / dungeon run',xp:50,icon:'ti-run'},
+  {id:'focus',name:'Deep Focus Session',sub:'90 min uninterrupted work',xp:60,icon:'ti-brain'},
+  {id:'read',name:'Knowledge Absorption',sub:'Read 20+ pages',xp:30,icon:'ti-book'},
+  {id:'reflect',name:'Hunter\'s Journal',sub:'Log progress & reflections',xp:20,icon:'ti-writing'},
+  {id:'mission',name:'Main Mission',sub:'Complete top priority task',xp:70,icon:'ti-sword'},
+  {id:'rest',name:'Recovery Protocol',sub:'7–8 hrs sleep',xp:25,icon:'ti-moon'},
+];
+
+const TOTAL_DAY_XP = QUESTS.reduce((s,q)=>s+q.xp,0);
+
+let state = {
+  month: new Date().getMonth(),
+  year: new Date().getFullYear(),
+  selectedDay: new Date().getDate(),
+  totalXP: 420,
+  level: 7,
+  completions: {},
+};
+
+try {
+  const saved = localStorage.getItem('sl_state');
+  if (saved) Object.assign(state, JSON.parse(saved));
+} catch(e){}
+
+function save() {
+  try { localStorage.setItem('sl_state', JSON.stringify(state)); } catch(e){}
+}
+
+function getRank(xp) {
+  let r = 0;
+  for (let i=RANK_THRESHOLDS.length-1;i>=0;i--) {
+    if (xp >= RANK_THRESHOLDS[i]) { r=i; break; }
+  }
+  return r;
+}
+
+function getXPToNext(xp) {
+  const ri = getRank(xp);
+  if (ri >= RANK_THRESHOLDS.length-1) return {pct:100,curr:xp,next:xp};
+  const lo = RANK_THRESHOLDS[ri], hi = RANK_THRESHOLDS[ri+1];
+  return { pct: Math.round((xp-lo)/(hi-lo)*100), curr: xp-lo, next: hi-lo };
+}
+
+function dayKey(y,m,d) { return `${y}-${m}-${d}`; }
+
+function getDayDone(y,m,d) {
+  return state.completions[dayKey(y,m,d)] || {};
+}
+
+function getDayXPPct(y,m,d) {
+  const done = getDayDone(y,m,d);
+  const earned = QUESTS.filter(q=>done[q.id]).reduce((s,q)=>s+q.xp,0);
+  return earned / TOTAL_DAY_XP;
+}
+
+function renderPlayer() {
+  const ri = getRank(state.totalXP);
+  const info = getXPToNext(state.totalXP);
+  const panel = document.getElementById('playerPanel');
+  panel.innerHTML = `
+    <div class="rank-badge">
+      <div class="rank-letter" style="color:${RANK_COLORS[ri]}">${RANKS[ri]}</div>
+      <div class="rank-label">Rank</div>
+    </div>
+    <div class="player-info">
+      <div class="player-name">SUNG JIN-WOO</div>
+      <div class="player-class">Shadow Monarch Hunter</div>
+      <div class="xp-row">
+        <div class="xp-bar-bg">
+          <div class="xp-bar-fill" style="width:${info.pct}%;background:linear-gradient(90deg,${RANK_COLORS[ri]}88,${RANK_COLORS[ri]})"></div>
+        </div>
+        <div class="xp-text">${info.curr} / ${info.next} XP</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-item">Level <span>${state.level}</span></div>
+        <div class="stat-item">Total XP <span>${state.totalXP}</span></div>
+        <div class="stat-item">Rank <span style="color:${RANK_COLORS[ri]}">${RANKS[ri]}</span></div>
+      </div>
+    </div>`;
+}
+
+function renderRankTrack() {
+  const ri = getRank(state.totalXP);
+  const track = document.getElementById('rankTrack');
+  let html = '<div class="rank-bar">';
+  for (let i=0;i<RANK_THRESHOLDS.length;i++) {
+    const active = i <= ri;
+    const color = active ? RANK_COLORS[i] : '#2a2a3a';
+    html += `<div style="flex:1;text-align:center">
+      <div class="rank-step"><div class="rank-step-fill" style="width:${active?100:0}%;background:${color}"></div></div>
+      <div class="rank-step-label" style="color:${active?color:'var(--sl-text-dim)'}">${RANKS[i]}</div>
+    </div>`;
+  }
+  html += '</div>';
+  track.innerHTML = html;
+}
+
+function renderCalendar() {
+  const {month,year,selectedDay} = state;
+  const today = new Date();
+  const firstDay = new Date(year,month,1).getDay();
+  const daysInMonth = new Date(year,month+1,0).getDate();
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  document.getElementById('monthTitle').textContent = `${months[month]} ${year}`;
+
+  const grid = document.getElementById('calendarGrid');
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = days.map(d=>`<div class="day-label">${d}</div>`).join('');
+
+  for (let i=0;i<firstDay;i++) html += `<div class="day-cell empty"></div>`;
+
+  for (let d=1;d<=daysInMonth;d++) {
+    const isToday = d===today.getDate() && month===today.getMonth() && year===today.getFullYear();
+    const isSel = d===selectedDay && month===state.month && year===state.year;
+    const pct = getDayXPPct(year,month,d);
+    const fillColor = pct>=1 ? 'var(--sl-gold)' : pct>0 ? 'var(--sl-purple-light)' : 'var(--sl-border)';
+    let cls = 'day-cell';
+    if (isToday) cls += ' today';
+    if (isSel) cls += ' selected';
+
+    html += `<div class="${cls}" onclick="selectDay(${d})">
+      <div class="day-num">${d}</div>
+      <div class="day-xp-bar"><div class="day-xp-fill" style="width:${Math.round(pct*100)}%;background:${fillColor}"></div></div>
+      ${pct>=1?'<div class="day-complete-mark" style="display:block;background:var(--sl-gold)"></div>':''}
+    </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function renderQuests() {
+  const {selectedDay,month,year} = state;
+  const done = getDayDone(year,month,selectedDay);
+  const earned = QUESTS.filter(q=>done[q.id]).reduce((s,q)=>s+q.xp,0);
+  const total = TOTAL_DAY_XP;
+  const pct = Math.round(earned/total*100);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  let questHtml = QUESTS.map(q=>{
+    const isDone = !!done[q.id];
+    return `<div class="quest-item ${isDone?'done':''}" onclick="toggleQuest('${q.id}')">
+      <div class="quest-check">${isDone?'✓':''}</div>
+      <div class="quest-info">
+        <div class="quest-name">${q.name}</div>
+        <div class="quest-sub">${q.sub}</div>
+      </div>
+      <div class="quest-xp">+${q.xp} XP</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('questPanel').innerHTML = `
+    <div class="quest-header">
+      <div class="quest-title-block">
+        <i class="ti ti-list-check quest-icon" aria-hidden="true"></i>
+        <div class="quest-title">Daily Quests</div>
+      </div>
+      <div class="quest-date">${months[month]} ${selectedDay}, ${year}</div>
+    </div>
+    <div class="quest-list">${questHtml}</div>
+    <div class="daily-progress">
+      <div class="progress-label">Daily XP</div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+      <div class="progress-count">${earned}/${total}</div>
+    </div>`;
+}
+
+function selectDay(d) {
+  state.selectedDay = d;
+  renderCalendar();
+  renderQuests();
+}
+
+function toggleQuest(qid) {
+  const {selectedDay,month,year} = state;
+  const key = dayKey(year,month,selectedDay);
+  if (!state.completions[key]) state.completions[key] = {};
+  const done = state.completions[key];
+  const q = QUESTS.find(q=>q.id===qid);
+  const wasLevelBefore = state.level;
+  const rankBefore = getRank(state.totalXP);
+
+  if (done[qid]) {
+    done[qid] = false;
+    state.totalXP = Math.max(0, state.totalXP - q.xp);
+    state.level = Math.max(1, state.level - 1);
+    showNotif('Quest Abandoned', `-${q.xp} XP — ${q.name}`);
+  } else {
+    done[qid] = true;
+    state.totalXP += q.xp;
+    state.level += 1;
+    const rankAfter = getRank(state.totalXP);
+    if (rankAfter > rankBefore) {
+      showLevelUp(RANKS[rankAfter], RANK_COLORS[rankAfter]);
+    } else {
+      showNotif('Quest Complete!', `+${q.xp} XP — ${q.name}`);
+    }
+  }
+
+  const dayDone = getDayDone(year,month,selectedDay);
+  const allDone = QUESTS.every(q=>dayDone[q.id]);
+  if (allDone) {
+    setTimeout(()=>showNotif('◆ Daily Clear!', 'All quests completed. Bonus XP awarded.'), 600);
+    state.totalXP += 20;
+    state.level += 1;
+  }
+
+  save();
+  renderPlayer();
+  renderRankTrack();
+  renderCalendar();
+  renderQuests();
+}
+
+let notifTimer;
+function showNotif(title, body) {
+  const el = document.getElementById('notification');
+  document.getElementById('notifTitle').textContent = title;
+  document.getElementById('notifBody').textContent = body;
+  el.classList.add('show');
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(()=>el.classList.remove('show'), 2800);
+}
+
+function showLevelUp(rank, color) {
+  const overlay = document.getElementById('levelUpOverlay');
+  document.getElementById('levelUpText').textContent = `RANK ${rank} UNLOCKED`;
+  document.getElementById('levelUpText').style.color = color;
+  document.getElementById('levelUpSub').textContent = `You have ascended to rank ${rank}. The System acknowledges your growth.`;
+  overlay.classList.add('show');
+}
+
+function dismissLevelUp() {
+  document.getElementById('levelUpOverlay').classList.remove('show');
+}
+
+document.getElementById('prevBtn').onclick = () => {
+  if (state.month === 0) { state.month = 11; state.year--; }
+  else state.month--;
+  state.selectedDay = 1;
+  renderCalendar(); renderQuests();
+};
+
+document.getElementById('nextBtn').onclick = () => {
+  if (state.month === 11) { state.month = 0; state.year++; }
+  else state.month++;
+  state.selectedDay = 1;
+  renderCalendar(); renderQuests();
+};
+
+renderPlayer();
+renderRankTrack();
+renderCalendar();
+renderQuests();
+</script>
